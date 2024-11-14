@@ -1,30 +1,31 @@
-# cli_init.py
+# dummy_data.py
 from app import app, db, User, Subscription
-from datetime import datetime
+from datetime import datetime, timedelta
 
-def init_db_cli():
+def init_dummy_data():
     with app.app_context():
+        # Clear existing data
         db.drop_all()
         db.create_all()
 
-        # Users with simple passwords
+        # Create users with emails
         users = [
-            User(username='rahul', password='pass'),
-            User(username='priya', password='pass'),
-            User(username='amit', password='pass'),
-            User(username='neha', password='pass')
+            User(username='rahul', password='pass', email='rahul@example.com'),
+            User(username='priya', password='pass', email='priya@example.com'),
+            User(username='amit', password='pass', email='amit@example.com'),
+            User(username='neha', password='pass', email='neha@example.com')
         ]
         db.session.add_all(users)
         db.session.commit()
 
-        # Subscriptions with active and inactive status
+        # Create subscriptions
         subscriptions = [
-            # Rahul's subscriptions
+            # Rahul's active subscriptions
             Subscription(
                 name='Netflix Premium',
                 amount=649,
                 subscription_type='monthly',
-                end_date=datetime(2024, 12, 31),
+                end_date=datetime.now() + timedelta(days=1),  # Expiring tomorrow
                 is_active=True,
                 user_id=1
             ),
@@ -32,100 +33,71 @@ def init_db_cli():
                 name='Amazon Prime',
                 amount=1499,
                 subscription_type='yearly',
-                end_date=datetime(2024, 12, 31),
+                end_date=datetime.now() + timedelta(days=30),
                 is_active=True,
                 user_id=1
             ),
+            
+            # Rahul's inactive subscription
             Subscription(
                 name='Hotstar',
                 amount=1499,
                 subscription_type='yearly',
-                end_date=datetime(2023, 12, 31),
+                end_date=datetime.now() - timedelta(days=30),
                 is_active=False,
                 user_id=1
             ),
 
             # Priya's subscriptions
             Subscription(
-                name='Hotstar',
-                amount=299,
-                subscription_type='monthly',
-                end_date=datetime(2024, 6, 30),
-                is_active=True,
-                user_id=2
-            ),
-            Subscription(
                 name='Spotify Family',
                 amount=179,
                 subscription_type='monthly',
-                end_date=datetime(2024, 12, 31),
+                end_date=datetime.now() + timedelta(days=15),
                 is_active=True,
                 user_id=2
             ),
             Subscription(
-                name='Netflix Basic',
-                amount=199,
+                name='YouTube Premium',
+                amount=129,
                 subscription_type='monthly',
-                end_date=datetime(2023, 11, 30),
+                end_date=datetime.now() - timedelta(days=5),
                 is_active=False,
                 user_id=2
             ),
 
             # Amit's subscriptions
             Subscription(
-                name='Spotify',
-                amount=119,
-                subscription_type='monthly',
-                end_date=datetime(2024, 12, 31),
-                is_active=True,
-                user_id=3
-            ),
-            Subscription(
-                name='YouTube Premium',
-                amount=129,
-                subscription_type='monthly',
-                end_date=datetime(2024, 8, 31),
-                is_active=True,
-                user_id=3
-            ),
-            Subscription(
-                name='Amazon Prime',
-                amount=1499,
+                name='Zomato Pro',
+                amount=900,
                 subscription_type='yearly',
-                end_date=datetime(2023, 10, 31),
-                is_active=False,
+                end_date=datetime.now() + timedelta(days=1),  # Expiring tomorrow
+                is_active=True,
                 user_id=3
             ),
 
             # Neha's subscriptions
             Subscription(
-                name='Netflix Premium',
-                amount=649,
+                name='Netflix Basic',
+                amount=199,
                 subscription_type='monthly',
-                end_date=datetime(2024, 7, 31),
+                end_date=datetime.now() + timedelta(days=20),
                 is_active=True,
                 user_id=4
             ),
             Subscription(
-                name='Swiggy One',
-                amount=899,
+                name='Amazon Prime',
+                amount=1499,
                 subscription_type='yearly',
-                end_date=datetime(2024, 12, 31),
-                is_active=True,
-                user_id=4
-            ),
-            Subscription(
-                name='Spotify',
-                amount=119,
-                subscription_type='monthly',
-                end_date=datetime(2023, 9, 30),
+                end_date=datetime.now() - timedelta(days=10),
                 is_active=False,
                 user_id=4
             )
         ]
         db.session.add_all(subscriptions)
         db.session.commit()
-        print("Database initialized with dummy data!")
+        
+        print("Dummy data initialized successfully!")
 
 if __name__ == '__main__':
-    init_db_cli()
+    init_dummy_data()

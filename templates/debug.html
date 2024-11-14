@@ -19,7 +19,7 @@
 
 <div class="tab-content">
   <div class="tab-pane fade show active" id="overview">
-    <div class="row">
+    <div class="row mb-4">
       <div class="col-md-6">
         <div class="card mb-4">
           <div class="card-body">
@@ -40,6 +40,15 @@
             <p>Yearly Total: ${{ "%.2f"|format(yearly_total) }}</p>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Email Test</h5>
+        <a href="{{ url_for('send_test_email') }}" class="btn btn-primary">
+          Send Test Email
+        </a>
       </div>
     </div>
   </div>

@@ -1,5 +1,6 @@
 <!-- templates/index.html -->
 {% extends "base.html" %} {% block content %}
+
 <style>
   .floating-btn {
     position: fixed;
@@ -19,12 +20,13 @@
   }
 </style>
 
+<!-- Summary Cards -->
 <div class="row mb-4">
   <div class="col-md-4">
     <div class="card">
       <div class="card-body">
         <h5>Monthly Subscriptions</h5>
-        <h3>${{ "%.2f"|format(monthly_total) }}</h3>
+        <h3>₹{{ "%.2f"|format(monthly_total) }}</h3>
       </div>
     </div>
   </div>
@@ -32,7 +34,7 @@
     <div class="card">
       <div class="card-body">
         <h5>Yearly Subscriptions</h5>
-        <h3>${{ "%.2f"|format(yearly_total) }}</h3>
+        <h3>₹{{ "%.2f"|format(yearly_total) }}</h3>
       </div>
     </div>
   </div>
@@ -40,12 +42,13 @@
     <div class="card">
       <div class="card-body">
         <h5>Total Annual Cost</h5>
-        <h3>${{ "%.2f"|format(total_annual) }}</h3>
+        <h3>₹{{ "%.2f"|format(total_annual) }}</h3>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Subscription Tabs -->
 <ul class="nav nav-tabs mb-3">
   <li class="nav-item">
     <a class="nav-link active" data-bs-toggle="tab" href="#active"
@@ -53,14 +56,16 @@
     >
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-bs-toggle="tab" href="#previous"
+    <a class="nav-link" data-bs-toggle="tab" href="#inactive"
       >Previous Subscriptions</a
     >
   </li>
 </ul>
 
 <div class="tab-content">
+  <!-- Active Subscriptions Tab -->
   <div class="tab-pane fade show active" id="active">
+    {% if active_subscriptions %}
     <div class="row">
       {% for subscription in active_subscriptions %}
       <div class="col-md-4 mb-3">
@@ -68,19 +73,19 @@
           <div class="card-body">
             <h5 class="card-title">{{ subscription.name }}</h5>
             <p class="card-text">
-              Amount: ${{ "%.2f"|format(subscription.amount) }}<br />
+              Amount: ₹{{ "%.2f"|format(subscription.amount) }}<br />
               Type: {{ subscription.subscription_type }}<br />
               Ends: {{ subscription.end_date.strftime('%Y-%m-%d') }}
             </p>
             <div class="btn-group">
               <a
                 href="{{ url_for('edit_subscription', id=subscription.id) }}"
-                class="btn btn-warning"
+                class="btn btn-warning btn-sm"
                 >Edit</a
               >
               <a
                 href="{{ url_for('delete_subscription', id=subscription.id) }}"
-                class="btn btn-danger"
+                class="btn btn-danger btn-sm"
                 onclick="return confirm('Are you sure?')"
                 >Delete</a
               >
@@ -90,16 +95,23 @@
       </div>
       {% endfor %}
     </div>
+    {% else %}
+    <p class="text-muted">No active subscriptions found.</p>
+    {% endif %}
   </div>
-  <div class="tab-pane fade" id="previous">
+
+  <!-- Inactive Subscriptions Tab -->
+  <div class="tab-pane fade" id="inactive">
+    {% if inactive_subscriptions %}
     <div class="row">
-      {% for subscription in previous_subscriptions %}
+      {% for subscription in inactive_subscriptions %}
       <div class="col-md-4 mb-3">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ subscription.name }}</h5>
+
             <p class="card-text">
-              Amount: ${{ "%.2f"|format(subscription.amount) }}<br />
+              Amount: ₹{{ "%.2f"|format(subscription.amount) }}<br />
               Type: {{ subscription.subscription_type }}<br />
               Ended: {{ subscription.end_date.strftime('%Y-%m-%d') }}
             </p>
@@ -108,10 +120,15 @@
       </div>
       {% endfor %}
     </div>
+    {% else %}
+    <p class="text-muted">No previous subscriptions found.</p>
+    {% endif %}
   </div>
 </div>
 
+<!-- Floating Add Button -->
 <a href="{{ url_for('add_subscription') }}" class="floating-btn">
   <i class="fas fa-plus"></i>
 </a>
+
 {% endblock %}
