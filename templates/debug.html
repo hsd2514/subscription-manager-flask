@@ -1,0 +1,114 @@
+<!-- templates/debug.html -->
+{% extends "base.html" %} {% block content %}
+
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <a class="nav-link active" data-bs-toggle="tab" href="#overview"
+      >Overview</a
+    >
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-bs-toggle="tab" href="#users">Users</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-bs-toggle="tab" href="#subscriptions"
+      >Subscriptions</a
+    >
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="overview">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Statistics</h5>
+            <p>Total Users: {{ users|length }}</p>
+            <p>
+              Active Subscriptions: {{
+              subscriptions|selectattr('is_active')|list|length }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Financial</h5>
+            <p>Monthly Total: ${{ "%.2f"|format(monthly_total) }}</p>
+            <p>Yearly Total: ${{ "%.2f"|format(yearly_total) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="users">
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Subscriptions</th>
+              <th>Total Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{ user.username }}</td>
+              <td>{{ user.subscriptions|length }}</td>
+              <td>
+                ${{ "%.2f"|format(user.subscriptions|sum(attribute='amount')) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="subscriptions">
+    <div class="card">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in subscriptions %}
+            <tr>
+              <td>{{ sub.name }}</td>
+              <td>${{ "%.2f"|format(sub.amount) }}</td>
+              <td>
+                <span
+                  class="badge bg-{{ 'info' if sub.subscription_type == 'monthly' else 'primary' }}"
+                >
+                  {{ sub.subscription_type }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge bg-{{ 'success' if sub.is_active else 'danger' }}"
+                >
+                  {{ 'Active' if sub.is_active else 'Inactive' }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

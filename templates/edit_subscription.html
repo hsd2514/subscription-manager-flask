@@ -1,0 +1,36 @@
+<!-- templates/edit_subscription.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header">Edit Subscription</div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ subscription.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="number" step="0.01" class="form-control" name="amount" value="{{ subscription.amount }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subscription Type</label>
+                        <select class="form-select" name="subscription_type" required>
+                            <option value="monthly" {% if subscription.subscription_type == 'monthly' %}selected{% endif %}>Monthly</option>
+                            <option value="yearly" {% if subscription.subscription_type == 'yearly' %}selected{% endif %}>Yearly</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" value="{{ subscription.end_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
