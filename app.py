@@ -97,36 +97,46 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Handle user login"""
     if request.method == 'POST':
         username = request.form['username']
-        email = request.form['email']  # Get email from form
         password = request.form['password']
         
-        user = User.query.filter_by(username=username, email=email).first()
-        if user and check_password_hash(user.password, password):
+        user = User.query.filter_by(username=username).first()
+        # Simple password check
+        if user and user.password == password:
             login_user(user)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid username or password')
             
     return render_template('login.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """Handle new user registration"""
+    """Handle user registration"""
     if request.method == 'POST':
         username = request.form['username']
-        email = request.form['email']  # Get email from form
+        email = request.form['email']     # Keep email for registration
         password = request.form['password']
         
+        # Check if username already exists
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists')
+            return redirect(url_for('register'))
+            
+        # Create new user with email
         user = User(
             username=username,
-            email=email,  # Add email
+            email=email,           # Include email
             password=generate_password_hash(password)
         )
         db.session.add(user)
         db.session.commit()
         
+        flash('Registration successful! Please login.')
         return redirect(url_for('login'))
+        
     return render_template('register.html')
 
 @app.route('/logout')
