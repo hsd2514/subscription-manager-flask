@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
-# from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -48,8 +48,8 @@ class User(UserMixin, db.Model):
     """User model for storing user credentials and linking subscriptions"""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)  # Add email field
     password = db.Column(db.String(120), nullable=False)  # Storing plain password
-    email = db.Column(db.String(120), nullable=False)  # Add this line
     subscriptions = db.relationship('Subscription', backref='user', lazy=True)
 
 class Subscription(db.Model):
@@ -99,24 +99,33 @@ def index():
 def login():
     """Handle user login"""
     if request.method == 'POST':
-        # Find user and verify password
-        user = User.query.filter_by(username=request.form['username']).first()
-        if user and user.password == request.form['password']:
+        username = request.form['username']
+        email = request.form['email']  # Get email from form
+        password = request.form['password']
+        
+        user = User.query.filter_by(username=username, email=email).first()
+        if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('index'))
-        flash('Invalid username or password')
+            return redirect(url_for('dashboard'))
+            
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """Handle new user registration"""
     if request.method == 'POST':
-        # Create new user with plain password
-        user = User(username=request.form['username'],
-                   password=request.form['password'])
+        username = request.form['username']
+        email = request.form['email']  # Get email from form
+        password = request.form['password']
+        
+        user = User(
+            username=username,
+            email=email,  # Add email
+            password=generate_password_hash(password)
+        )
         db.session.add(user)
         db.session.commit()
-        flash('Registration successful!')
+        
         return redirect(url_for('login'))
     return render_template('register.html')
 

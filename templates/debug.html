@@ -36,8 +36,8 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Financial</h5>
-            <p>Monthly Total: ${{ "%.2f"|format(monthly_total) }}</p>
-            <p>Yearly Total: ${{ "%.2f"|format(yearly_total) }}</p>
+            <p>Monthly Total: ₹{{ "%.2f"|format(monthly_total) }}</p>
+            <p>Yearly Total: ₹{{ "%.2f"|format(yearly_total) }}</p>
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@
               <td>{{ user.username }}</td>
               <td>{{ user.subscriptions|length }}</td>
               <td>
-                ${{ "%.2f"|format(user.subscriptions|sum(attribute='amount')) }}
+                ₹{{ "%.2f"|format(user.subscriptions|sum(attribute='amount')) }}
               </td>
             </tr>
             {% endfor %}
@@ -96,7 +96,7 @@
             {% for sub in subscriptions %}
             <tr>
               <td>{{ sub.name }}</td>
-              <td>${{ "%.2f"|format(sub.amount) }}</td>
+              <td>₹{{ "%.2f"|format(sub.amount) }}</td>
               <td>
                 <span
                   class="badge bg-{{ 'info' if sub.subscription_type == 'monthly' else 'primary' }}"
